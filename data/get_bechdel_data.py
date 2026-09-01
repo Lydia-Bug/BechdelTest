@@ -3,14 +3,15 @@ from bs4 import BeautifulSoup
 import re
 import csv
 
+# Gets all individual year page links 
 URL = "https://bechdeltest.com/year/"
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, "html.parser")
 content = soup.find(id="content")
-
 links = [a.get("href") for a in content.find_all("a")]
 
 
+# Gets movie data from each page
 all_movies = []
 
 for link in links:
@@ -55,4 +56,3 @@ with open("bechdel_movies.csv", "w", newline="", encoding="utf-8") as f:
     writer.writerows(all_movies)
 
 print("Saved to bechdel_movies.csv")
-
