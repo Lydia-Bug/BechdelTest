@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import csv
+from collections import defaultdict
 
 # Gets all individual year page links 
 URL = "https://bechdeltest.com/year/"
@@ -48,8 +49,39 @@ for link in links:
             "name": name
         })
 
+# Dedupe by imdb_id:
+#   - if all rows for an imdb_id share the same score, keep just one of them
+#   - if they disagree on score, drop all rows for that imdb_id (can't tell
+#     which one is correct)
+by_id = defaultdict(list)
+for movie in all_movies:
+    by_id[movie["imdb_id"]].append(movie)
+
+deduped_movies = []
+n_collapsed = 0
+n_dropped = 0
+
+for imdb_id, rows in by_id.items():
+    if len(rows) == 1:
+        deduped_movies.append(rows[0])
+        continue
+
+    scores = {row["score"] for row in rows}
+    if len(scores) == 1:
+        # Same score across all duplicates - keep just the first one
+        deduped_movies.append(rows[0])
+        n_collapsed += len(rows) - 1
+    else:
+        # Conflicting scores for the same movie - drop them all
+        n_dropped += len(rows)
+
+all_movies = deduped_movies
+
+print(f"Collapsed {n_collapsed} duplicate rows with matching scores")
+print(f"Dropped {n_dropped} rows with conflicting scores for the same imdb_id")
+
 # Save to CSV
-with open("bechdel_movies.csv", "w", newline="", encoding="utf-8") as f:
+with open("data/bechdel_movies.csv", "w", newline="", encoding="utf-8") as f:
     fieldnames = ["imdb_id", "score", "explanation", "name"]
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
