@@ -81,6 +81,9 @@ def server(input, output, session):
 
     @render.ui
     def country_movies():
+        if input.compare() != "country":
+            return None
+
         country = selected_country.get()
 
         if country is None:
@@ -95,10 +98,23 @@ def server(input, output, session):
         if movies.empty:
             return ui.p(f"No movies found for {country}.")
 
+        # Look up the display name from the first matching row's parallel list
+        first_row = movies.iloc[0]
+        idx = first_row["origin_country_iso3"].index(country)
+        country_name = first_row["origin_country_name"][idx]
+
         movie_cards = []
 
         for _, movie in movies.iterrows():
             poster_path = movie.get("poster_path")
+
+            details = [
+                ui.p(movie["title"], class_="movie-title"),
+                ui.p(f"Score: {movie['score']}", class_="movie-score"),
+            ]
+
+            if movie.get("explanation"):
+                details.append(ui.em(movie["explanation"], class_="movie-explanation"))
 
             if poster_path:
                 poster_url = f"https://image.tmdb.org/t/p/w200{poster_path}"
@@ -109,23 +125,20 @@ def server(input, output, session):
                             src=poster_url,
                             class_="movie-poster",
                         ),
-                        ui.p(
-                            movie["title"],
-                            class_="movie-title",
-                        ),
+                        *details,
                         class_="movie-card",
                     )
                 )
             else:
                 movie_cards.append(
                     ui.div(
-                        ui.p(movie["title"]),
+                        *details,
                         class_="movie-card",
                     )
                 )
 
         return ui.div(
-            ui.h3(f"Movies from {country}"),
+            ui.h3(f"Movies from {country_name}"),
             ui.div(
                 *movie_cards,
                 class_="movie-grid",

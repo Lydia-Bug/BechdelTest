@@ -15,6 +15,14 @@ def iso2_to_iso3(code):
         return None
 
 
+def iso2_to_name(code):
+    try:
+        country = pycountry.countries.get(alpha_2=code)
+        return country.name if country else None
+    except (AttributeError, KeyError):
+        return None
+
+
 def parse_list(value):
     """
     Convert a string representation of a Python list/dictionary
@@ -123,6 +131,12 @@ def load_data() -> pd.DataFrame:
     merged["origin_country_iso3"] = merged["origin_country_parsed"].apply(
         lambda countries: [
             iso2_to_iso3(country) for country in countries if iso2_to_iso3(country)
+        ]
+    )
+
+    merged["origin_country_name"] = merged["origin_country_parsed"].apply(
+        lambda countries: [
+            iso2_to_name(country) for country in countries if iso2_to_name(country)
         ]
     )
 

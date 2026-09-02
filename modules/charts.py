@@ -105,16 +105,16 @@ def comparison_chart(df, compare):
 
 
 def country_map(df, on_country_click):
-    data = df.explode("origin_country_iso3").dropna(
+    exploded = df.explode(["origin_country_iso3", "origin_country_name"]).dropna(
         subset=["origin_country_iso3", "score"]
     )
 
-    country_scores = data.groupby("origin_country_iso3", as_index=False).agg(
+    country_scores = exploded.groupby("origin_country_iso3", as_index=False).agg(
         average_score=("score", "mean"),
         movies=("title", "count"),
+        country_name=("origin_country_name", "first"),
     )
 
-    # Exclude countries with too few movies to be meaningful
     country_scores = country_scores[country_scores["movies"] >= 3]
 
     fig = px.choropleth(
