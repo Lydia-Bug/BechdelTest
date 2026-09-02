@@ -1,3 +1,7 @@
+* {
+    --pink: #FF6B6B;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -59,18 +63,34 @@ html, body {
 }
 
 hr {
-   color: #FF6B6B;
+   color: var(--pink);
 }
 
 .irs-bar, .irs-handle, .irs-from, .irs-to {
-    background-color: #FF6B6B !important;
+    background-color: var(--pink) !important;
 }
 
 .form-select, .selectize-input {
-    border-color: #FF6B6B;
+    border-color: var(--pink);
 }
 
 .form-select:focus, .selectize-input.focus {
-    border-color: #FF6B6B;
+    border-color: var(--pink);
     box-shadow: 0 0 0 .25rem rgba(255,107,107,0.25);
+}
+
+.main .card-header-tabs .nav-link {
+    border: none;
+    color: black;
+}
+
+.main .card-header-tabs .nav-link.active {
+    border: 1px solid;
+    border-color: var(--pink);
+    border-bottom-color: white;
+    color: var(--pink);
+}
+
+.card-header {
+    border-color: var(--pink);
 }

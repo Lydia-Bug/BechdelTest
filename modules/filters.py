@@ -2,7 +2,7 @@ def filter_movies(
     df,
     year_range,
     genres,
-    countries,
+    # countries,
 ):
     """Apply dashboard filters to the movie dataframe."""
 
@@ -35,14 +35,14 @@ def filter_movies(
     # # Origin country
     # # --------------------------------------------------------------
 
-    if countries:
+    # if countries:
 
-        selected_countries = set(countries)
+    #     selected_countries = set(countries)
 
-        df = df[
-            df["origin_country_parsed"].apply(
-                lambda movie_countries: bool(selected_countries & set(movie_countries))
-            )
-        ]
+    #     df = df[
+    #         df["origin_country_parsed"].apply(
+    #             lambda movie_countries: bool(selected_countries & set(movie_countries))
+    #         )
+    #     ]
 
     return df

@@ -1,6 +1,9 @@
 import plotly.express as px
 import plotly.graph_objects as go
 
+ACCENT_COLOR = "#FF6B6B"
+BACKGROUND_COLOR = "#fffafa"
+
 
 def comparison_chart(df, compare):
 
@@ -21,26 +24,11 @@ def comparison_chart(df, compare):
                 "score": "Average Bechdel score",
             },
             title="Bechdel score by genre",
+            color_discrete_sequence=[ACCENT_COLOR],
         )
-
-    # elif compare == "country":
-    #     data = (
-    #         df.explode("origin_country_iso3")
-    #         .groupby("origin_country_iso3", as_index=False)["score"]
-    #         .mean()
-    #         .sort_values("score", ascending=False)
-    #     )
-
-    #     fig = px.bar(
-    #         data,
-    #         x="origin_country_iso3",
-    #         y="score",
-    #         labels={
-    #             "origin_country_iso3": "Country",
-    #             "score": "Average Bechdel score",
-    #         },
-    #         title="Bechdel score by country",
-    #     )
+        fig.update_traces(
+            hovertemplate="%{x}<br>Average score: %{y:.1f}<extra></extra>"
+        )
 
     elif compare == "year":
         data = (
@@ -58,6 +46,10 @@ def comparison_chart(df, compare):
                 "score": "Average Bechdel score",
             },
             title="Bechdel score by release year",
+            color_discrete_sequence=[ACCENT_COLOR],
+        )
+        fig.update_traces(
+            hovertemplate="%{x}<br>Average score: %{y:.1f}<extra></extra>"
         )
 
     elif compare in ["vote_average", "runtime", "budget", "revenue"]:
@@ -83,6 +75,7 @@ def comparison_chart(df, compare):
                 compare: labels[compare],
             },
             title=f"{labels[compare]} by Bechdel score",
+            color_discrete_sequence=[ACCENT_COLOR],
         )
 
         fig.update_yaxes(
@@ -90,6 +83,7 @@ def comparison_chart(df, compare):
             tickvals=[0, 1, 2, 3],
             range=[-0.5, 3.5],
         )
+        fig.update_traces(hovertemplate=f"%{{x:.1f}} {labels[compare]}<extra></extra>")
 
     else:
         fig = px.scatter(
@@ -99,6 +93,12 @@ def comparison_chart(df, compare):
     fig.update_yaxes(
         range=[0, 3],
         dtick=1,
+    )
+
+    fig.update_layout(
+        paper_bgcolor=BACKGROUND_COLOR,
+        plot_bgcolor=BACKGROUND_COLOR,
+        margin=dict(l=60, r=40, t=100, b=50),
     )
 
     return fig
@@ -114,6 +114,9 @@ def country_map(df, on_country_click):
         movies=("title", "count"),
     )
 
+    # Exclude countries with too few movies to be meaningful
+    country_scores = country_scores[country_scores["movies"] >= 3]
+
     fig = px.choropleth(
         country_scores,
         locations="origin_country_iso3",
@@ -121,7 +124,7 @@ def country_map(df, on_country_click):
         locationmode="ISO-3",
         hover_name="origin_country_iso3",
         hover_data={
-            "average_score": ":.2f",
+            "average_score": ":.1f",
             "movies": True,
             "origin_country_iso3": False,
         },
@@ -133,8 +136,16 @@ def country_map(df, on_country_click):
         range_color=(0, 3),
     )
 
+    fig.update_geos(
+        lataxis_range=[-60, 90],  # crop out Antarctica
+        projection_type="natural earth",
+    )
+
     fig.update_layout(
-        margin=dict(l=0, r=0, t=50, b=0),
+        height=900,
+        margin=dict(t=100),
+        paper_bgcolor=BACKGROUND_COLOR,
+        geo=dict(bgcolor=BACKGROUND_COLOR),
     )
 
     # Convert to FigureWidget so we can capture clicks

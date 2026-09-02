@@ -29,7 +29,7 @@ def server(input, output, session):
             df=movies,
             year_range=input.year_range(),
             genres=input.genre_filter(),
-            countries=input.country_filter(),
+            # countries=input.country_filter(),
         )
 
         return result
