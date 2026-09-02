@@ -25,7 +25,6 @@ app_ui = ui.page_fluid(
         # Sidebar
         # ==============================================================
         ui.div(
-            ui.h3("Compare"),
             ui.input_select(
                 "compare",
                 "Compare",
@@ -33,7 +32,6 @@ app_ui = ui.page_fluid(
                 selected="genre",
             ),
             ui.hr(),
-            ui.h3("Filters"),
             # ----------------------------------------------------------
             # Release year
             # ----------------------------------------------------------
@@ -60,12 +58,12 @@ app_ui = ui.page_fluid(
             # ----------------------------------------------------------
             # Country
             # ----------------------------------------------------------
-            ui.input_selectize(
-                "country_filter",
-                "Origin country",
-                choices=ALL_COUNTRIES,
-                multiple=True,
-            ),
+            # ui.input_selectize(
+            #     "country_filter",
+            #     "Origin country",
+            #     choices=ALL_COUNTRIES,
+            #     multiple=True,
+            # ),
             class_="sidebar",
         ),
         # ==============================================================

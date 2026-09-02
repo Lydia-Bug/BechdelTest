@@ -1,6 +1,7 @@
 html, body {
     height: 100%;
     margin: 0;
+    background-color: #F8F7F9;
 }
 
 .dashboard {
@@ -55,4 +56,21 @@ html, body {
 .movie-title {
     margin-top: 8px;
     font-weight: 500;
+}
+
+hr {
+   color: #FF6B6B;
+}
+
+.irs-bar, .irs-handle, .irs-from, .irs-to {
+    background-color: #FF6B6B !important;
+}
+
+.form-select, .selectize-input {
+    border-color: #FF6B6B;
+}
+
+.form-select:focus, .selectize-input.focus {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 .25rem rgba(255,107,107,0.25);
 }
